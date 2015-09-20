@@ -12,6 +12,8 @@ Follow react native getting started guide : https://facebook.github.io/react-nat
 
 # Running
 
+`react-native android`
+
 `react-native run-android`
 
 # MIT License 
