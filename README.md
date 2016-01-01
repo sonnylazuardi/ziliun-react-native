@@ -6,6 +6,7 @@ Ziliun article reader app built with React Native
 - Pull To Refresh
 - Parallax View
 - Network Error handler
+- File size trimmed to 4.6MB (from 7.2MB)
 
 ## Demo
 
