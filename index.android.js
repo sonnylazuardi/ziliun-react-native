@@ -117,6 +117,7 @@ var DrawerLayout = React.createClass({
         </View>
       </View>
     );
+
     return (
       <DrawerLayoutAndroid
         ref="drawer"

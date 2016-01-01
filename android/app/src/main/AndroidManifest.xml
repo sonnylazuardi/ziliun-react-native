@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ziliunapp">
+    package="com.ziliunapp"
+    android:versionCode="101"
+    android:versionName="1.1" >
 
     <uses-permission android:name="android.permission.INTERNET" />
 

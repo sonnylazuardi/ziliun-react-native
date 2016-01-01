@@ -11,9 +11,11 @@ var {
   View,
   ScrollView,
   ProgressBarAndroid,
+  Alert
 } = React;
 
 var REQUEST_URL = 'http://busintime.id:6001/article/';
+var ParallaxView = require('react-native-parallax-view');
 
 var ArticleListScreen = React.createClass({
   getInitialState: function() {
@@ -39,6 +41,9 @@ var ArticleListScreen = React.createClass({
           loaded: true
         });
       })
+      .catch(function(ex) {
+        Alert.alert('Ziliun', 'Failed to load article');
+      })
       .done();
   },
   renderLoadingView: function() {
@@ -56,34 +61,37 @@ var ArticleListScreen = React.createClass({
       return this.renderLoadingView();
     }
 
-    var text = this.state.article.content.map((item) => {
+    var text = this.state.article.content.map((item, i) => {
       return (
-        <Text style={styles.text}>
+        <Text key={i} style={styles.text}>
           {item}
         </Text>
       );
-    })
+    });
 
     var subimage = (
-      <Image source={{uri: this.state.article.subimage}} style={styles.subimage} />
+      <Image key={'subimage'} source={{uri: this.state.article.subimage}} style={styles.subimage} />
     );
 
     text.push(subimage);
 
     return (
-      <ScrollView contentContainerStyle={styles.contentContainer}>
-        <View>
-          <Image source={{uri: this.state.article.image}} style={styles.image} />
-
-          <View style={{flex: 1, padding: 15}}>
-            <Text style={{fontSize: 18, fontWeight: 'bold', lineHeight: 24, textAlign: 'center'}}>{this.state.article.title}</Text>
+      <ParallaxView
+        ref={component => this._scrollView = component}
+        backgroundSource={{ uri: this.state.article.image }}
+        windowHeight={300}
+        header={(
+          <View style={styles.header}>
+            <Text style={{fontSize: 18, fontWeight: 'bold', lineHeight: 24, textAlign: 'center', color: 'white'}}>{this.state.article.title}</Text>
             <View style={{marginBottom: 20, marginTop: 10}}>
               <Text style={{fontSize: 10, fontWeight: 'bold', color: '#f7913d', textAlign: 'center'}}>{this.state.article.category} - {this.state.article.author}</Text>
             </View>
+          </View>
+        )}>
+          <View style={{flex: 1, padding: 15}}>
             {text}
           </View>
-        </View>
-      </ScrollView>
+      </ParallaxView>
     );
     
   }
@@ -118,6 +126,14 @@ var styles = StyleSheet.create({
     height: 150,
     backgroundColor: '#888888',
   },
+  header: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    paddingHorizontal: 20,
+    paddingVertical: 24
+  }
 });
+
 
 module.exports = ArticleListScreen;

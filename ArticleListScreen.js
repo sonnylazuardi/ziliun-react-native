@@ -14,6 +14,8 @@ var {
   PixelRatio,
   TouchableHighlight,
   ProgressBarAndroid,
+  Alert,
+  PullToRefreshViewAndroid
 } = React;
 
 var REQUEST_URL = 'http://busintime.id:6001/';
@@ -28,6 +30,7 @@ var ArticleListScreen = React.createClass({
       data: [],
       loaded: false,
       isLoadingTail: false,
+      isRefreshing: false,
       page: 1,
     };
   },
@@ -50,7 +53,8 @@ var ArticleListScreen = React.createClass({
       name: 'article',
     });
   },
-  componentDidMount: function() {
+  onRefresh: function() {
+    this.setState({isRefreshing: true});
     this.fetchData()
       .then((response) => response.json())
       .then((responseData) => {
@@ -59,9 +63,16 @@ var ArticleListScreen = React.createClass({
           loaded: true,
           data: responseData,
           page: this.state.page+1,
+          isRefreshing: false,
         });
       })
+      .catch(function(ex) {
+        Alert.alert('Ziliun', 'Failed to load article');
+      })
       .done();
+  },
+  componentDidMount: function() {
+    this.onRefresh();
   },
   renderArticle: function(article) {
     return (
@@ -118,6 +129,9 @@ var ArticleListScreen = React.createClass({
           page: this.state.page+1,
         });
       })
+      .catch(function(ex) {
+        Alert.alert('Ziliun', 'Failed to load article');
+      })
       .done();
   },
   render: function() {
@@ -126,13 +140,21 @@ var ArticleListScreen = React.createClass({
     }
 
     return (
-      <ListView
-        dataSource={this.state.dataSource}
-        renderRow={this.renderArticle}
-        style={styles.listView}
-        renderFooter={this.renderFooter}
-        onEndReached={this.onEndReached}
-      />
+      <PullToRefreshViewAndroid
+        style={{flex: 1}}
+        refreshing={this.state.isRefreshing}
+        onRefresh={this.onRefresh}
+        colors={['#f7913d', '#f7913d', '#f7913d']}
+        progressBackgroundColor={'#fff'}
+        >
+        <ListView
+          dataSource={this.state.dataSource}
+          renderRow={this.renderArticle}
+          style={styles.listView}
+          renderFooter={this.renderFooter}
+          onEndReached={this.onEndReached}
+        />
+      </PullToRefreshViewAndroid>
     );
     
   }
